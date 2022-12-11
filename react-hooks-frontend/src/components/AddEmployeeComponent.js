@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EmployeeService from "../services/EmployeeService";
+import{Link, useParams} from "react-router-dom"
 
 const AddEmployeeComponent = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [emailId, setEmailId] = useState("");
   const navigate = useNavigate();
+  const {Id} = useParams();
 
   const saveEmployee = (e) => {
     e.preventDefault();
@@ -20,6 +22,17 @@ const AddEmployeeComponent = () => {
       .catch((error) => {
         console.log(error);
       });
+
+      useEffect(()=>{
+        EmployeeService.getEmployeeById(Id).then((response)=>{
+          setFirstName(response.data.firstName)
+          setLastName(response.data.lastName)
+          setEmailId(response.data.emailId)
+        }).catch(error=>{
+          console.log(error )
+        })
+
+      },[])
   };
 
   return (
@@ -34,7 +47,7 @@ const AddEmployeeComponent = () => {
               <form>
                 <div className="form-group mb-2">
                   <label className="form-label">First Name</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter First Name"
                     name="firstName"
@@ -71,6 +84,7 @@ const AddEmployeeComponent = () => {
                 >
                   Submit
                 </button>
+                <Link to='/employees' className='btn btn-danger'> Cancel</Link>
               </form>
             </div>
           </div>
